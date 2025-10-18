@@ -6,12 +6,17 @@ bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['start'])
 def handle_hay(message):
-    bot.send_message(message.chat.id,'привет я твой бот я не умею нечего!')
+    bot.send_message(message.chat.id,'привет я твой бот я не умею нечего! Если что пиши команду /help')
 
 @bot.message_handler(commands=['learn'])
 def handle_learning(message):
     bot.send_message(message.chat.id,'Обучения сейчас начнётся!')
 
+@bot.message_handler(commands=['help'])
+def handle_helping(message):
+    bot.send_message(message.chat.id,'1. Этот бот создан для изучения англиского языка ;')
+    bot.send_message(message.chat.id,'2. В этом боте есть команды learn, help и start ;')
+    bot.send_message(message.chat.id,'3. Его автор великий професор наук Марк Грачёв.')
 @bot.message_handler(func=lambda message: True)
 def message_all(message):
     if message.text.lower() == 'как тебя зовут?':
