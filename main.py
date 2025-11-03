@@ -1,12 +1,37 @@
 import telebot
+import json
 
 TOKEN = '8209222535:AAEiYZXNWfjPEe0l3YJMrwzLJW-RCvVgVOc'
 
 bot = telebot.TeleBot(TOKEN)
 
+with open("user_data.json", "r", encoding='utf8') as file:
+    user_data = json.load(file)
+
+
 @bot.message_handler(commands=['start'])
 def handle_hay(message):
     bot.send_message(message.chat.id,'привет я твой бот я не умею нечего! Если что пиши команду /help')
+
+@bot.message_handler(commands=['addword'])
+def handle_addwording(message):
+    global user_data
+    chat_id = message.chat.id
+    user_dict = user_data.get(chat_id, {})
+
+    words = message.text.split()[1:]
+    if len(words) == 2:
+        word, translation = words[0].lower(), words[1].lower()
+        user_dict[word] = translation
+
+        user_data[chat_id] = user_dict
+
+        with open("user_data.json", "w", encoding='utf8') as file:
+            json.dump(user_data, file, ensure_ascii=False, indent=4)
+
+        bot.send_message(chat_id, f"Слово '{word}' добавлено в словарь")
+    else:
+        bot.send_message(chat_id, "Произошла но не бойтесь меня починит разраб или же попробуйте ещё раз")
 
 @bot.message_handler(commands=['learn'])
 def handle_learning(message):
@@ -15,8 +40,9 @@ def handle_learning(message):
 @bot.message_handler(commands=['help'])
 def handle_helping(message):
     bot.send_message(message.chat.id,'1. Этот бот создан для изучения англиского языка ;')
-    bot.send_message(message.chat.id,'2. В этом боте есть команды learn, help и start ;')
+    bot.send_message(message.chat.id,'2. В этом боте есть команды learn, help, addword и start ;')
     bot.send_message(message.chat.id,'3. Его автор великий професор наук Марк Грачёв.')
+
 @bot.message_handler(func=lambda message: True)
 def message_all(message):
     if message.text.lower() == 'как тебя зовут?':
