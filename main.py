@@ -1,5 +1,6 @@
 import telebot
 import json
+import random
 
 TOKEN = '8209222535:AAEiYZXNWfjPEe0l3YJMrwzLJW-RCvVgVOc'
 
@@ -36,6 +37,9 @@ def handle_addwording(message):
 @bot.message_handler(commands=['learn'])
 def handle_learning(message):
     bot.send_message(message.chat.id,'Обучения сейчас начнётся!')
+    user_words = user_data.get(str(message.chat.id), {})
+    random_word = random.choice(list(user_words.keys()))
+    bot.send_message(message.chat.id, f"{random_word}")
 
 @bot.message_handler(commands=['help'])
 def handle_helping(message):
