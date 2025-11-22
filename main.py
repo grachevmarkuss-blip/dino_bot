@@ -36,39 +36,29 @@ def handle_addwording(message):
 @bot.message_handler(commands=['learn'])
 def handle_learning(message):
     user_words = user_data.get(str(message.chat.id), {})
-
+    print(message.text)
     words_number = int(message.text.split()[1])
 
-    ask_transation(message.chat_id, user_words, words_number)
-    if len(user_data.get(str(message.chat.id)).items()) > 0:
-        bot.send_message(message.chat.id, 'Обучения сейчас начнётся!')
-        user_words = user_data.get(str(message.chat.id), {})
-        random_word = random.choice(list(user_words.keys()))
-        bot.send_message(message.chat.id, f"{random_word}")
-    else:
-        bot.send_message(str(message.chat.id), "у вас пуст словарь")
+    ask_translation(message.chat.id, user_words, words_number)
 
-def ask_transation(chat_id, user_words, words_left):
+def ask_translation(chat_id, user_words, words_left):
    if words_left > 0:
        word = random.choice(list(user_words.keys()))
        translation = user_words[word]
        bot.send_message(chat_id, f'Напиши перевод слова "{word}".')
 
-       bot.register_next_step_handler_by_chat_id(chat_id, check_translation, words_left, translation)
+       bot.register_next_step_handler_by_chat_id(chat_id, check_translation, translation, words_left)
    else:
        bot.send_message(chat_id, "Урок окончен с вас 5 тыщ до завтра >:)")
-
 
 def check_translation(message, expected_translation, words_left):
     user_translation = message.text.strip().lower()
     if user_translation == expected_translation.lower():
-        bot.send_message(message.chat_id, 'Тебе просто повезло!!!')
+        bot.send_message(message.chat.id, 'Тебе просто повезло!!!')
     else:
-        bot.send_message(message.chat_id, f'ХА слабачьё не умеешь ничего даже эээ ну   КОРОЧЕ НЕЧЕГО НЕ УМЕЕШЬ 2 в журнал за год я твоя училка под прикрытием а правильный ответ "{expected_translation}"')
+        bot.send_message(message.chat.id, f'ХА слабачьё не умеешь ничего даже эээ ну   КОРОЧЕ НЕЧЕГО НЕ УМЕЕШЬ 2 в журнал за год я твоя училка под прикрытием а правильный ответ "{expected_translation}"')
 
-    ask_transation(message.chat_id, user_translation, user_data[str(message.chat.id)], words_left)
-
-
+    ask_translation(message.chat.id, user_data[str(message.chat.id)], words_left)
 
 @bot.message_handler(commands=['help'])
 def handle_helping(message):
